@@ -11,8 +11,16 @@ context buf_of begin
 thm write_char'_def
 value write_char'
 
-lemma state: "i \<noteq> 0 \<Longrightarrow> ((heap_w8 s)(x := scast (of_int c))) (x +\<^sub>p i) = heap_w8 s (x +\<^sub>p i)"
+lemma noteq: "i \<noteq> 0 \<Longrightarrow> (x :: 8 word ptr) +\<^sub>p i \<noteq> x"
+  apply (clarsimp simp: ptr_add_def)
+  
 sorry
+
+lemma state: "i \<noteq> 0 \<Longrightarrow> ((heap_w8 s)(x := scast (of_int c))) (x +\<^sub>p i) = heap_w8 s (x +\<^sub>p i)"
+  apply (simp only: fun_upd_apply)
+  apply (drule noteq)
+  apply (erule if_not_P)
+done
 
 theorem write_char_overflow_check:
   "\<lbrace> \<lambda>s. is_valid_w8 s x
