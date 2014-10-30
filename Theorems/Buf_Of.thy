@@ -11,13 +11,13 @@ context buf_of begin
 thm write_char'_def
 value write_char'
 
-lemma state: "y \<noteq> 0 \<Longrightarrow> ((heap_w8 s)(x := scast (of_int c))) (x +\<^sub>p y) = heap_w8 s (x +\<^sub>p y)"
+lemma state: "i \<noteq> 0 \<Longrightarrow> ((heap_w8 s)(x := scast (of_int c))) (x +\<^sub>p i) = heap_w8 s (x +\<^sub>p i)"
 sorry
 
 theorem write_char_overflow_check:
   "\<lbrace> \<lambda>s. is_valid_w8 s x
-         \<and> sz = size_of TYPE(8 word)
-         \<and> y = ptr_add x (of_nat sz)
+         \<and> i \<noteq> 0
+         \<and> y = ptr_add x i
          \<and> is_valid_w8 s y
          \<and> P (heap_w8 s y) \<rbrace>
      write_char' (ptr_coerce x) c
