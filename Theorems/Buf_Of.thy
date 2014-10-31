@@ -15,9 +15,13 @@ lemma ptrEq: "Ptr (ptr_val x) = x"
   apply auto
   done  
   
+lemma natNumber: "of_nat i - of_nat j = 0 \<Longrightarrow> i = j"
+  
+  sorry
+  
 lemma of_int_i_impl: "of_int i = 0 \<Longrightarrow> i = 0"
-  apply (rule )
-  apply (rule of_int_eq_0_iff)
+  unfolding of_int_def
+  apply clarsimp
   
   
   
