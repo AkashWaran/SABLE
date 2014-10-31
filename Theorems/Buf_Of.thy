@@ -15,17 +15,27 @@ lemma ptrEq: "Ptr (ptr_val x) = x"
   apply auto
   done  
   
-lemma natNumber: "of_nat i - of_nat j = 0 \<Longrightarrow> i = j"
+lemma test2: "of_nat i - of_nat j = 0 \<Longrightarrow> of_nat i = of_nat j"
   
-  sorry
+sorry
+  
+lemma test: "of_nat i = of_nat j \<Longrightarrow> i = j"
+by (metis buf_of.test2 diff_0_eq_0 of_nat_0_eq_iff)
+  
+lemma natSubtraction: "of_nat i - of_nat j = 0 \<Longrightarrow> i = j"
+by (metis buf_of.test buf_of.test2)
+  
+lemma natNumber: "(case Rep_Integ i of (i, j) \<Rightarrow> of_nat i - of_nat j) = 0 \<Longrightarrow> i = j"
+  apply cases
+  apply blast+
+  apply clarsimp
+by (smt2 Nat_Transfer.transfer_int_nat_relations(3) buf_of.test2 diff_is_0_eq semiring_1_class.of_nat_simps(2))
   
 lemma of_int_i_impl: "of_int i = 0 \<Longrightarrow> i = 0"
   unfolding of_int_def
   apply clarsimp
-  
-  
-  
-  sorry
+  apply (erule natNumber)
+  done
 
 lemma ptrAdd: "i \<noteq> 0 \<Longrightarrow> ptr_val x + of_int i \<noteq> ptr_val x"
   apply auto;
