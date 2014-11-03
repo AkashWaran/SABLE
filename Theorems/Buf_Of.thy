@@ -8,6 +8,24 @@ autocorres [
 
 context buf_of begin
 
+declare [[ show_types ]]
+
+theorem write_char_overflow_check:
+  "\<lbrace> \<lambda>s. is_valid_w8 s x
+         \<and> n = size_of TYPE(8 word)
+         \<and> y \<notin> {ptr_val x ..+ n}
+         \<and> P (heap_w8 s (Ptr y)) \<rbrace>
+     write_char' (ptr_coerce x) c
+    \<lbrace> \<lambda> _ s. P (heap_w8 s (Ptr y)) \<rbrace>!"
+  unfolding write_char'_def
+  apply clarsimp
+  apply wp
+  apply (clarsimp simp:)
+by (metis One_nat_def first_in_intvl fun_upd_apply ptr_val.ptr_val_def zero_neq_one)
+
+(* Old code below, ignore *)
+
+(*
 thm write_char'_def
 value write_char'
   
@@ -94,7 +112,7 @@ lemma buf_of_overflow_right:
      fill_buf' (ptr_coerce x) (of_nat sz) c
     \<lbrace> \<lambda> _ s. P (heap_w8 s y) \<rbrace>!"
     sorry
-    
+*)    
 
 
 end
