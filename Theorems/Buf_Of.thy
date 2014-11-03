@@ -23,6 +23,59 @@ theorem write_char_overflow_check:
   apply (clarsimp simp:)
 by (metis One_nat_def first_in_intvl fun_upd_apply ptr_val.ptr_val_def zero_neq_one)
 
+theorem fill_buf_overflow_check:
+  "\<lbrace> \<lambda>s. is_valid_w8 s x
+         \<and> (n = size_of TYPE(8 word) * (of_nat sz))
+         \<and> y \<notin> {ptr_val x ..+ n }
+         \<and> P (heap_w8 s (Ptr y)) \<rbrace>
+     fill_buf' (ptr_coerce x) (of_nat sz) c
+    \<lbrace> \<lambda> _ s. P (heap_w8 s (Ptr y)) \<rbrace>!"
+  unfolding fill_buf'_def
+  apply clarsimp
+  apply wp
+  apply (subst whileLoop_unroll, wp)
+    apply (subst whileLoop_unroll, wp)
+      apply (rule validNF_false_pre)
+    apply wp
+  apply (clarsimp simp:)
+  apply (intro conjI impI)
+  prefer 2
+  apply (metis Abs_fnat_hom_0 first_in_intvl fun_upd_apply less_irrefl ptr_val.ptr_val_def)
+  apply unat_arith
+  apply clarsimp
+  
+  
+(* Testing for errors *)
+
+theorem write_char_wrong_overflow_check1:
+  "\<lbrace> \<lambda>s. is_valid_w8 s x
+         \<and> n = size_of TYPE(8 word)
+         \<and> y \<notin> {ptr_val x ..+ n}
+         \<and> P (heap_w8 s (Ptr y)) \<rbrace>
+     write_char_wrong' (ptr_coerce x) c
+    \<lbrace> \<lambda> _ s. P (heap_w8 s (Ptr y)) \<rbrace>!"
+  unfolding write_char_wrong'_def
+  apply clarsimp
+  apply wp
+  apply (clarsimp simp:)
+(* by (metis One_nat_def first_in_intvl fun_upd_apply ptr_val.ptr_val_def zero_neq_one) *)
+oops
+
+theorem write_char_wrong_overflow_check2:
+  "\<lbrace> \<lambda>s. is_valid_w8 s x
+         \<and> n = size_of TYPE(8 word)
+         \<and> y \<notin> {ptr_val x ..+ n}
+         \<and> P (heap_w8 s (Ptr y)) \<rbrace>
+     write_char_wrong' (ptr_coerce x) c
+    \<lbrace> \<lambda> _ s. P (heap_w8 s (Ptr y)) \<rbrace>!"
+  unfolding write_char_wrong'_def
+  apply clarsimp
+  apply wp
+  apply auto
+  apply (clarsimp simp: ptr_add_def)
+oops
+  
+
 (* Old code below, ignore *)
 
 (*
