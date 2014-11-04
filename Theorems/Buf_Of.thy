@@ -3,7 +3,8 @@ imports AutoCorres
 begin
 
 install_C_file "../Files/buf_of.c"
-autocorres [ 
+autocorres [
+  heap_abs_syntax
 ] "../Files/buf_of.c"
 
 context buf_of begin
@@ -13,16 +14,16 @@ declare [[ show_types ]]
 theorem write_char_overflow_check:
   "\<lbrace> \<lambda>s. is_valid_w8 s x
          \<and> n = size_of TYPE(8 word)
-         \<and> y \<notin> {ptr_val x ..+ n}
-         \<and> P (heap_w8 s (Ptr y)) \<rbrace>
+         \<and> ptr_val y \<notin> {ptr_val x ..+ n}
+         \<and> P (heap_w8 s y) \<rbrace>
      write_char' (ptr_coerce x) c
-    \<lbrace> \<lambda> _ s. P (heap_w8 s (Ptr y)) \<rbrace>!"
+    \<lbrace> \<lambda> _ s. P (heap_w8 s y) \<rbrace>!"
   unfolding write_char'_def
   apply clarsimp
   apply wp
   apply (clarsimp simp:)
-by (metis One_nat_def first_in_intvl fun_upd_apply ptr_val.ptr_val_def zero_neq_one)
-
+by (metis One_nat_def first_in_intvl fun_upd_apply zero_neq_one)
+  
 (* Old code below, ignore *)
 
 (*
