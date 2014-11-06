@@ -28,9 +28,10 @@ by (metis One_nat_def first_in_intvl fun_upd_apply zero_neq_one)
 abbreviation "deref s x \<equiv> h_val (hrs_mem (t_hrs_' s)) x"
 
 theorem write_char_overflow_check_type_unsafe:
-  "\<lbrace> \<lambda>s. c_guard x
+  "\<lbrace> \<lambda>s. c_guard (x :: 8 word ptr)
          \<and> n = size_of TYPE(8 word)
-         \<and> ptr_val y \<notin> {ptr_val x ..+ n}
+         \<and> ptr_val (y :: 8 word ptr) \<notin> {ptr_val x ..+ n}
+         \<and> c_guard y
          \<and> P (deref s y) \<rbrace>
      write_char_unsafe' (ptr_coerce x) c
     \<lbrace> \<lambda> _ s. P (deref s y) \<rbrace>!"
@@ -38,13 +39,12 @@ theorem write_char_overflow_check_type_unsafe:
   apply (clarsimp simp:skip_def)
   apply wp
   apply (clarsimp simp:hrs_mem_update heap_update_def)
+  apply (simp add: intvl_def)
   apply (subst heap_update_list_value)
   apply (clarsimp simp: addr_card)
-  apply safe
-    apply (subst if_P)
-      apply (clarsimp simp: unat_of_nat32 word_bits_def)
-      apply (clarsimp simp: intvl_def)
-      
+  apply auto
+  prefer 2
+sorry
       
 
 
