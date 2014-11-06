@@ -4,7 +4,8 @@ begin
 
 install_C_file "../Files/buf_of.c"
 autocorres [
-  heap_abs_syntax
+  heap_abs_syntax,
+  no_heap_abs=write_char_unsafe
 ] "../Files/buf_of.c"
 
 context buf_of begin
@@ -23,6 +24,29 @@ theorem write_char_overflow_check:
   apply wp
   apply (clarsimp simp:)
 by (metis One_nat_def first_in_intvl fun_upd_apply zero_neq_one)
+
+abbreviation "deref s x \<equiv> h_val (hrs_mem (t_hrs_' s)) x"
+
+theorem write_char_overflow_check_type_unsafe:
+  "\<lbrace> \<lambda>s. c_guard x
+         \<and> n = size_of TYPE(8 word)
+         \<and> ptr_val y \<notin> {ptr_val x ..+ n}
+         \<and> P (deref s y) \<rbrace>
+     write_char_unsafe' (ptr_coerce x) c
+    \<lbrace> \<lambda> _ s. P (deref s y) \<rbrace>!"
+  unfolding write_char_unsafe'_def
+  apply (clarsimp simp:skip_def)
+  apply wp
+  apply (clarsimp simp:hrs_mem_update heap_update_def)
+  apply (subst heap_update_list_value)
+  apply (clarsimp simp: addr_card)
+  apply safe
+    apply (subst if_P)
+      apply (clarsimp simp: unat_of_nat32 word_bits_def)
+      apply (clarsimp simp: intvl_def)
+      
+      
+
 
 theorem fill_buf_overflow_check:
   "\<lbrace> \<lambda>s. is_valid_w8 s x
@@ -44,8 +68,10 @@ theorem fill_buf_overflow_check:
   apply (metis first_in_intvl fun_upd_apply semiring_1_class.of_nat_0 word_not_simps(1))
   apply unat_arith
   apply clarsimp
-  oops
   
+  
+  oops
+    
 (* Testing for errors *)
 
 theorem write_char_wrong_overflow_check1:

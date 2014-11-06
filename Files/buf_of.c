@@ -3,6 +3,11 @@ void write_char(void *buf, int val) {
     *dest = (unsigned char) val;
 }
 
+void write_char_unsafe(void *buf, int val) {
+    unsigned char *dest = buf;
+    *dest = (unsigned char) val;
+}
+
 void write_char_wrong(void *buf, int val) {
     unsigned char *dest = buf;
     *(dest + 1) = (unsigned char) val;
