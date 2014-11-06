@@ -10,7 +10,7 @@ autocorres [
 
 context buf_of begin
 
-declare [[ show_types ]]
+(*declare [[ show_types ]]*)
 
 theorem write_char_overflow_check:
   "\<lbrace> \<lambda>s. is_valid_w8 s x
@@ -31,20 +31,17 @@ theorem write_char_overflow_check_type_unsafe:
   "\<lbrace> \<lambda>s. c_guard (x :: 8 word ptr)
          \<and> n = size_of TYPE(8 word)
          \<and> ptr_val (y :: 8 word ptr) \<notin> {ptr_val x ..+ n}
-         \<and> c_guard y
          \<and> P (deref s y) \<rbrace>
      write_char_unsafe' (ptr_coerce x) c
     \<lbrace> \<lambda> _ s. P (deref s y) \<rbrace>!"
   unfolding write_char_unsafe'_def
-  apply (clarsimp simp:skip_def)
+  apply (clarsimp simp: skip_def)
   apply wp
-  apply (clarsimp simp:hrs_mem_update heap_update_def)
-  apply (simp add: intvl_def)
-  apply (subst heap_update_list_value)
-  apply (clarsimp simp: addr_card)
-  apply auto
-  prefer 2
-sorry
+  apply (clarsimp simp: hrs_mem_update heap_update_def h_val_def)
+  apply (subst heap_update_nmem_same)
+  apply (metis length_Cons list.size(3) to_bytes_word8)
+  apply assumption
+done
       
 
 
