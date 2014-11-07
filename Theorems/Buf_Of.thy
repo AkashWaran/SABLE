@@ -5,12 +5,12 @@ begin
 install_C_file "../Files/buf_of.c"
 autocorres [
   heap_abs_syntax,
-  no_heap_abs=write_char_unsafe
+  no_heap_abs = write_char_unsafe
 ] "../Files/buf_of.c"
 
 context buf_of begin
 
-(*declare [[ show_types ]]*)
+declare [[ show_types ]]
 
 theorem write_char_overflow_check:
   "\<lbrace> \<lambda>s. is_valid_w8 s x
@@ -24,6 +24,25 @@ theorem write_char_overflow_check:
   apply wp
   apply (clarsimp simp:)
 by (metis One_nat_def first_in_intvl fun_upd_apply zero_neq_one)
+
+theorem write_chars_overflow_check:
+  "\<lbrace> \<lambda>s. is_valid_w8 s x
+         \<and> buf = {ptr_val x ..+ (unat n * size_of TYPE(8 word))}
+         \<and> ptr_val y \<notin> buf
+         \<and> 0 \<notin> buf
+         \<and> P (heap_w8 s y) \<rbrace>
+     write_chars' (ptr_coerce x) c n
+    \<lbrace> \<lambda> _ s. P (heap_w8 s y) \<rbrace>!"
+  unfolding write_chars'_def
+  apply clarsimp
+  apply wp
+  apply (subst whileLoop_add_inv [where M="\<lambda>(n', _). n'"
+                and I="\<lambda>n' s. n' \<le> n \<and> P (heap_w8 s y)
+                      \<and> y \<noteq> x +\<^sub>p uint n'"])
+  apply wp
+  apply auto
+  apply unat_arith
+  apply (simp add: fun_upd_apply)
 
 abbreviation "deref s x \<equiv> h_val (hrs_mem (t_hrs_' s)) x"
 
