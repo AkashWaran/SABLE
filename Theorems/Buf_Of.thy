@@ -26,23 +26,26 @@ theorem write_char_overflow_check:
 by (metis One_nat_def first_in_intvl fun_upd_apply zero_neq_one)
 
 theorem write_chars_overflow_check:
-  "\<lbrace> \<lambda>s. is_valid_w8 s x
-         \<and> buf = {ptr_val x ..+ (unat n * size_of TYPE(8 word))}
+  "\<lbrace> \<lambda>s. buf = {ptr_val (x::8 word ptr) ..+ (unat n * size_of TYPE(8 word))}
          \<and> ptr_val y \<notin> buf
          \<and> 0 \<notin> buf
+         \<and> unat n < addr_card
          \<and> P (heap_w8 s y) \<rbrace>
      write_chars' (ptr_coerce x) c n
     \<lbrace> \<lambda> _ s. P (heap_w8 s y) \<rbrace>!"
   unfolding write_chars'_def
+  apply (rule validNF_assume_pre)
   apply clarsimp
   apply wp
-  apply (subst whileLoop_add_inv [where M="\<lambda>(n', _). n'"
-                and I="\<lambda>n' s. n' \<le> n \<and> P (heap_w8 s y)
-                      \<and> y \<noteq> x +\<^sub>p uint n'"])
+  apply (subst whileLoop_add_inv [where M="\<lambda>(n', _). n - n'"
+                and I="\<lambda>n' s. n' \<le> n \<and> P (heap_w8 s y)"])
   apply wp
-  apply auto
+  apply safe
   apply unat_arith
-  apply (simp add: fun_upd_apply)
+  prefer 2
+  apply unat_arith
+  prefer 3
+  apply simp
 
 abbreviation "deref s x \<equiv> h_val (hrs_mem (t_hrs_' s)) x"
 
