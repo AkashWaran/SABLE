@@ -5,7 +5,7 @@ begin
 install_C_file "../Files/buf_of.c"
 autocorres [
   heap_abs_syntax,
-  no_heap_abs = write_char_unsafe
+  no_heap_abs = write_char_unsafe write_chars_unsafe
 ] "../Files/buf_of.c"
 
 context buf_of begin
@@ -46,6 +46,21 @@ theorem write_chars_overflow_check:
   apply unat_arith
   prefer 3
   apply simp
+  apply clarsimp
+  apply (erule contrapos_np)
+  prefer 2
+  apply (erule order_leE)
+  apply (metis less_irrefl)
+  apply clarsimp
+  apply (erule less_asym)
+  apply (erule xt9)
+  prefer 2
+  apply (metis word_less_nat_alt)
+  
+  
+  
+  
+  sorry
 
 abbreviation "deref s x \<equiv> h_val (hrs_mem (t_hrs_' s)) x"
 
@@ -65,8 +80,31 @@ theorem write_char_overflow_check_type_unsafe:
   apply assumption
 done
       
-
-
+theorem write_chars_overflow_check_type_unsafe:
+  "\<lbrace> \<lambda>s. buf = {ptr_val x ..+ (unat n * size_of TYPE(8 word))}
+         \<and> unat n < addr_card
+         \<and> 0 \<notin> buf
+         \<and> ptr_val y \<notin> buf
+         \<and> P (deref s y) \<rbrace>
+     write_chars_unsafe' (ptr_coerce x) c n
+    \<lbrace> \<lambda> _ s. P (deref s y) \<rbrace>!"
+  unfolding write_chars_unsafe'_def
+  apply (rule validNF_assume_pre)
+  apply clarsimp
+  apply wp
+  apply (clarsimp simp: hrs_mem_update heap_update_def h_val_def)
+  apply (subst whileLoop_add_inv [where M="\<lambda>(n', _). n - n'"
+                and I="\<lambda>n' s. n' \<le> n \<and> P (deref s y)"])
+  apply wp
+  apply auto
+  apply unat_arith
+  prefer 2
+  apply unat_arith
+  
+  sorry
+  
+  
+  
 theorem fill_buf_overflow_check:
   "\<lbrace> \<lambda>s. is_valid_w8 s x
          \<and> (n = size_of TYPE(8 word) * (of_nat sz))

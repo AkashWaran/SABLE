@@ -13,6 +13,13 @@ void write_char_unsafe(void *buf, int val) {
     *dest = (unsigned char) val;
 }
 
+void write_chars_unsafe(void *buf, unsigned char val, unsigned int n) {
+    unsigned char *dest = buf;
+    unsigned int i;
+    for (i = 0; i < n; i++)
+        *(dest + i) = val;
+}
+
 void write_char_wrong(void *buf, int val) {
     unsigned char *dest = buf;
     *(dest + 1) = (unsigned char) val;
@@ -32,4 +39,6 @@ void fill_buf_WRONG(void *buf, unsigned int length, int val) {
     for (i = 0; i <= length; i++) {
 	dest[i] = (unsigned char) val;
     }
+
+
 }
