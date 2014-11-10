@@ -47,17 +47,35 @@ theorem write_chars_overflow_check:
   prefer 3
   apply auto
   apply (drule outside_intvl_range)
-  apply clarsimp
   apply (erule disjE)
-  apply (drule unat_mono)
-  apply (drule outside_intvl_range)
-  apply (erule disjE)
+  apply (subst fun_upd_apply)
+  apply auto
+  apply (simp add: ptr_add_def)
+  apply (erule contrapos_pp)
+  back
+  back
+  back
+  back
+  back
+  back
+  back
   
   
-  sledgehammer
   
   
   
+  
+  
+  apply (case_tac "n' = 0")
+    apply (metis less_irrefl ptr_add_0_id uint_eq_0)
+  apply (case_tac "n' < 0")
+    apply (metis word_not_simps(1))
+  apply (case_tac "n' > 0")
+    apply clarsimp
+    apply (rule ptr_add_word32 [where a="x" and x="n'"])
+  
+
+
   
   sorry
 
