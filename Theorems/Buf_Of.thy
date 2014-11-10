@@ -46,16 +46,15 @@ theorem write_chars_overflow_check:
   apply unat_arith
   prefer 3
   apply auto
-thm outside_intvl_range
-  apply (erule contrapos_np)
-  prefer 2
-  apply (erule order_leE)
-  apply (metis less_irrefl)
+  apply (drule outside_intvl_range)
   apply clarsimp
-  apply (erule less_asym)
-  apply (erule xt9)
-  prefer 2
-  apply (metis word_less_nat_alt)
+  apply (erule disjE)
+  apply (drule unat_mono)
+  apply (drule outside_intvl_range)
+  apply (erule disjE)
+  
+  
+  sledgehammer
   
   
   
