@@ -49,7 +49,6 @@ theorem write_chars_overflow_check:
   apply (drule outside_intvl_range)
   apply (erule disjE)
   apply (subst fun_upd_apply)
-  apply auto
   apply (simp add: ptr_add_def)
   apply (erule contrapos_pp)
   back
@@ -59,6 +58,12 @@ theorem write_chars_overflow_check:
   back
   back
   back
+  apply (rule leD)
+thm zero_not_in_intvl_no_overflow
+  apply (drule zero_not_in_intvl_no_overflow)
+  apply unat_arith
+  apply (subst fun_upd_apply)
+  apply (simp add: ptr_add_def)
   
   
   
