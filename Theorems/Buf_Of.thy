@@ -59,11 +59,17 @@ theorem write_chars_overflow_check:
   back
   back
   apply (rule leD)
+thm leD
 thm zero_not_in_intvl_no_overflow
   apply (drule zero_not_in_intvl_no_overflow)
   apply unat_arith
   apply (subst fun_upd_apply)
   apply (simp add: ptr_add_def)
+  apply (drule leD)
+  back
+  apply (rule impI)
+  apply (erule_tac P = "ptr_val y < ptr_val x + n" in notE)
+  apply clarsimp
   
   
   
