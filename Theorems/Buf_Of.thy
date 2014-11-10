@@ -45,8 +45,8 @@ theorem write_chars_overflow_check:
   prefer 2
   apply unat_arith
   prefer 3
-  apply simp
-  apply clarsimp
+  apply auto
+thm outside_intvl_range
   apply (erule contrapos_np)
   prefer 2
   apply (erule order_leE)
