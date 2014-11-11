@@ -49,27 +49,17 @@ theorem write_chars_overflow_check:
   apply (drule outside_intvl_range)
   apply (erule disjE)
   apply (subst fun_upd_apply)
-  apply (simp add: ptr_add_def)
-  apply (erule contrapos_pp)
-  back
-  back
-  back
-  back
-  back
-  back
-  back
+  apply (simp add: ptr_add_def, rule impI)
+  apply (erule_tac Q = "ptr_val y < ptr_val x" in contrapos_pp)
   apply (rule leD)
-thm leD
-thm zero_not_in_intvl_no_overflow
   apply (drule zero_not_in_intvl_no_overflow)
   apply unat_arith
   apply (subst fun_upd_apply)
-  apply (simp add: ptr_add_def)
-  apply (drule leD)
-  back
-  apply (rule impI)
-  apply (erule_tac P = "ptr_val y < ptr_val x + n" in notE)
+  apply (simp add: ptr_add_def, rule impI)
+  apply (drule leD, erule_tac P = "ptr_val y < ptr_val x + n" in notE)
   apply clarsimp
+  apply (drule zero_not_in_intvl_no_overflow)
+  apply (erule word_plus_strict_mono_right)
   
   
   
