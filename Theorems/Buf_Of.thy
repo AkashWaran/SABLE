@@ -67,6 +67,20 @@ thm zero_not_in_intvl_no_overflow
   apply (simp add: ptr_add_def)
   apply (drule leD)
   back
+  apply (erule contrapos_np)
+  back
+  apply (drule zero_not_in_intvl_no_overflow)
+  
+  
+  
+  
+  sledgehammer
+  
+  (*
+  apply (subst fun_upd_apply)
+  apply (simp add: ptr_add_def)
+  apply (drule leD)
+  back
   apply (rule impI)
   apply (erule_tac P = "ptr_val y < ptr_val x + n" in notE)
   apply clarsimp
@@ -84,9 +98,9 @@ thm zero_not_in_intvl_no_overflow
   apply (case_tac "n' > 0")
     apply clarsimp
     apply (rule ptr_add_word32 [where a="x" and x="n'"])
+  *)
   
-
-
+  
   
   sorry
 
