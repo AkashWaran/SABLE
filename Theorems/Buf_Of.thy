@@ -56,16 +56,13 @@ theorem write_chars_overflow_check:
   apply unat_arith
   apply (subst fun_upd_apply)
   apply (simp add: ptr_add_def)
-  apply (drule leD)
-  back
-  apply (erule contrapos_np)
-  back
+  apply (drule_tac y = "ptr_val x + n" in leD)
+  apply (erule_tac Q = "ptr_val y < ptr_val x + n" in contrapos_np)
   apply (drule zero_not_in_intvl_no_overflow)
   
-  
-  
-  
-  sledgehammer
+
+
+
   
   (*
   apply (simp add: ptr_add_def, rule impI)
