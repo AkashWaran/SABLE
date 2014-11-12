@@ -25,6 +25,14 @@ theorem write_char_overflow_check:
   apply (clarsimp simp:)
 by (metis One_nat_def first_in_intvl fun_upd_apply zero_neq_one)
 
+thm outside_intvl_range
+
+(* NOTE : We do not consider cases where the buffer wraps around as this goes into the else clause *)
+lemma outside_intvl_range' :
+"p \<notin> {a..+b} \<Longrightarrow> if a + of_nat b = 0 then p < a \<and> a + of_nat b \<le> p else p < a \<or> a + of_nat b \<le> p"
+
+sorry
+
 theorem write_chars_overflow_check:
   "\<lbrace> \<lambda>s. buf = {ptr_val (x::8 word ptr) ..+ (unat n * size_of TYPE(8 word))}
          \<and> ptr_val y \<notin> buf
@@ -46,7 +54,11 @@ theorem write_chars_overflow_check:
   apply unat_arith
   prefer 3
   apply auto
+  thm outside_intvl_range
   apply (drule outside_intvl_range)
+  
+  (* Need to use outside_intvl_range' *)
+  
   apply (erule disjE)
   apply (subst fun_upd_apply)
   apply (simp add: ptr_add_def, rule impI)
@@ -55,11 +67,11 @@ theorem write_chars_overflow_check:
   apply (drule zero_not_in_intvl_no_overflow)
   apply unat_arith
   apply (subst fun_upd_apply)
-  apply (simp add: ptr_add_def)
+  apply (simp add: ptr_add_def, rule impI)
   apply (drule_tac y = "ptr_val x + n" in leD)
   apply (erule_tac Q = "ptr_val y < ptr_val x + n" in contrapos_np)
   apply (drule zero_not_in_intvl_no_overflow)
-  
+
 
 
 
