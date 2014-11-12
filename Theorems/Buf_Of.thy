@@ -29,9 +29,13 @@ thm outside_intvl_range
 
 (* NOTE : We do not consider cases where the buffer wraps around as this goes into the else clause *)
 lemma outside_intvl_range' :
-"p \<notin> {a..+b} \<Longrightarrow> if a + of_nat b = 0 then p < a \<and> a + of_nat b \<le> p else p < a \<or> a + of_nat b \<le> p"
-
-sorry
+"p \<notin> {a..+b} \<and> a \<noteq> 0 \<Longrightarrow> if a + of_nat b = 0 then p < a \<and> a + of_nat b \<le> p else p < a \<or> a + of_nat b \<le> p"
+  apply (case_tac "a + of_nat b \<noteq> 0")
+    apply (metis outside_intvl_range)
+  apply clarsimp
+  apply unat_arith
+  apply clarsimp
+by (smt2 Abs_fnat_hom_add Nat.add_diff_inverse add_less_cancel_left intvlI unat_less_helper unat_lt2p word_of_nat_less word_unat.Rep_inverse)
 
 theorem write_chars_overflow_check:
   "\<lbrace> \<lambda>s. buf = {ptr_val (x::8 word ptr) ..+ (unat n * size_of TYPE(8 word))}
