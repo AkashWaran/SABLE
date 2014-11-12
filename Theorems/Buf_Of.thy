@@ -58,11 +58,7 @@ theorem write_chars_overflow_check:
   apply unat_arith
   prefer 3
   apply auto
-  thm outside_intvl_range
-  apply (drule outside_intvl_range)
-  
-  (* Need to use outside_intvl_range' *)
-  
+  apply (frule outside_intvl_range)
   apply (erule disjE)
   apply (subst fun_upd_apply)
   apply (simp add: ptr_add_def, rule impI)
@@ -75,9 +71,14 @@ theorem write_chars_overflow_check:
   apply (drule_tac y = "ptr_val x + n" in leD)
   apply (erule_tac Q = "ptr_val y < ptr_val x + n" in contrapos_np)
   apply (drule zero_not_in_intvl_no_overflow)
+  apply clarsimp
+  apply unat_arith
+  apply clarsimp
+  apply (metis intvlI word_unat.Rep_inverse)
+  
 
-
-
+  
+  
 
   
   (*
