@@ -134,7 +134,7 @@ theorem write_char_overflow_check_type_unsafe:
   apply (metis length_Cons list.size(3) to_bytes_word8)
   apply assumption
 done
-      
+  
 theorem write_chars_overflow_check_type_unsafe:
   "\<lbrace> \<lambda>s. buf = {ptr_val x ..+ (unat n * size_of TYPE(8 word))}
          \<and> 0 \<notin> buf
@@ -155,12 +155,19 @@ theorem write_chars_overflow_check_type_unsafe:
   apply unat_arith
   prefer 3
   apply auto
-  
-  
+  prefer 2
+  apply (simp add: c_guard_def)
+  apply (simp add: c_null_guard_def)
+  apply (simp add: ptr_aligned_def)
+  apply (simp add: ptr_add_def)
+  apply unat_arith
+  apply auto
+  apply (metis intvlI intvl_Suc word_unat.Rep_inverse)
+  apply (clarsimp simp: hrs_mem_update heap_update_def h_val_def)
+  apply (simp add: ptr_add_def)
   
   
   sorry
-  
   
   
 theorem fill_buf_overflow_check:
