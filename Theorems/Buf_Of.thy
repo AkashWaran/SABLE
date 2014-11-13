@@ -42,7 +42,7 @@ theorem write_chars_overflow_check:
          \<and> ptr_val y \<notin> buf
          \<and> 0 \<notin> buf
          \<and> P (heap_w8 s y) 
-         \<and> (\<forall>z. ptr_val z \<in> buf \<longrightarrow> is_valid_w8 s z)\<rbrace>
+         \<and> (\<forall>z u. ptr_val z \<in> buf \<longrightarrow> is_valid_w8 u z) \<rbrace>
      write_chars' (ptr_coerce x) c n
     \<lbrace> \<lambda> _ s. P (heap_w8 s y) \<rbrace>!"
   unfolding write_chars'_def
@@ -82,7 +82,7 @@ theorem write_chars_overflow_check:
   
   
   
-
+  
   
   (*
   apply (simp add: ptr_add_def, rule impI)
@@ -137,7 +137,6 @@ done
       
 theorem write_chars_overflow_check_type_unsafe:
   "\<lbrace> \<lambda>s. buf = {ptr_val x ..+ (unat n * size_of TYPE(8 word))}
-         \<and> unat n < addr_card
          \<and> 0 \<notin> buf
          \<and> ptr_val y \<notin> buf
          \<and> P (deref s y) \<rbrace>
@@ -147,14 +146,18 @@ theorem write_chars_overflow_check_type_unsafe:
   apply (rule validNF_assume_pre)
   apply clarsimp
   apply wp
-  apply (clarsimp simp: hrs_mem_update heap_update_def h_val_def)
   apply (subst whileLoop_add_inv [where M="\<lambda>(n', _). n - n'"
                 and I="\<lambda>n' s. n' \<le> n \<and> P (deref s y)"])
   apply wp
-  apply auto
+  apply safe
   apply unat_arith
   prefer 2
   apply unat_arith
+  prefer 3
+  apply auto
+  
+  
+  
   
   sorry
   
