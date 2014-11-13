@@ -77,7 +77,8 @@ theorem write_chars_overflow_check:
   apply (metis intvlI word_unat.Rep_inverse)
   apply (erule_tac x="x +\<^sub>p uint n'" in allE)
   apply (erule impE)
-  
+  apply (simp add:ptr_add_def)
+  apply (metis intvlI word_less_nat_alt word_unat.Rep_inverse)
   
   
   
