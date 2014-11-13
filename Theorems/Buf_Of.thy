@@ -38,11 +38,11 @@ lemma outside_intvl_range' :
 by (smt2 Abs_fnat_hom_add Nat.add_diff_inverse add_less_cancel_left intvlI unat_less_helper unat_lt2p word_of_nat_less word_unat.Rep_inverse)
 
 theorem write_chars_overflow_check:
-  "\<lbrace> \<lambda>s. buf = {ptr_val (x::8 word ptr) ..+ (unat n * size_of TYPE(8 word))}
+  "\<lbrace>\<lambda>s. buf = {ptr_val (x::8 word ptr) ..+ (unat n * size_of TYPE(8 word))}
          \<and> ptr_val y \<notin> buf
          \<and> 0 \<notin> buf
-         \<and> unat n < addr_card
-         \<and> P (heap_w8 s y) \<rbrace>
+         \<and> P (heap_w8 s y) 
+         \<and> (\<forall>z. ptr_val z \<in> buf \<longrightarrow> is_valid_w8 s z)\<rbrace>
      write_chars' (ptr_coerce x) c n
     \<lbrace> \<lambda> _ s. P (heap_w8 s y) \<rbrace>!"
   unfolding write_chars'_def
@@ -75,8 +75,10 @@ theorem write_chars_overflow_check:
   apply unat_arith
   apply clarsimp
   apply (metis intvlI word_unat.Rep_inverse)
+  apply (erule_tac x="x +\<^sub>p uint n'" in allE)
+  apply (erule impE)
   
-
+  
   
   
 
