@@ -20,6 +20,11 @@ void write_chars_unsafe(void *buf, unsigned char val, unsigned int n) {
         *(dest + i) = val;
 }
 
+void test_func(void) {
+    unsigned int *buf;
+    write_chars_unsafe(buf, 0x9c, 12);
+}
+
 void write_char_wrong(void *buf, int val) {
     unsigned char *dest = buf;
     *(dest + 1) = (unsigned char) val;
