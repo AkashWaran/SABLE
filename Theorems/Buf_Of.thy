@@ -139,10 +139,11 @@ theorem write_chars_overflow_check_type_unsafe:
 done
 
 thm test_func'_def
+
 theorem test_func_ok:
-  "\<lbrace> \<lambda>s. True\<rbrace>
+  "\<lbrace> \<lambda>s. True \<rbrace>
      test_func'
-    \<lbrace> \<lambda> _ s. \<forall>y. P (heap_w8 s y) \<rbrace>!"
+    \<lbrace> \<lambda> _ s. True \<rbrace>!"
   
 sorry
 
