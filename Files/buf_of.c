@@ -27,10 +27,29 @@ extern struct mem_node *start;
 
 #define HEAP_START 0x100000
 
+#define TPM_SHA1_160_HASH_LEN    0x14
+
+typedef struct tdTPM_DIGEST
+{
+    unsigned char digest[TPM_SHA1_160_HASH_LEN];
+} TPM_DIGEST;
+
+/*
 void test_func(void) {
     init_allocator(h, start);
-    unsigned int *buf = alloc(h, 12, 0);
+    unsigned int *buf = alloc(h, sizeof(TPM_DIGEST), 0);
     write_chars_unsafe(buf, 0x9c, 12);
+}
+*/
+
+TPM_DIGEST dig;
+
+void test_func(void) {
+    write_chars_unsafe(&dig, 0x9c, 12);
+}
+
+void test_func_WRONG(void) {
+    write_chars_unsafe(&dig, 0x9c, 50);
 }
 
 void write_char_wrong(void *buf, int val) {
