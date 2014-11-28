@@ -101,6 +101,7 @@ done
   
 theorem write_chars_overflow_check_type_unsafe:
   "\<lbrace> \<lambda>s. buf = {ptr_val x ..+ (unat n * size_of TYPE(8 word))}
+         \<and> unat n \<le> size_of TYPE('a::{c_type})
          \<and> 0 \<notin> buf
          \<and> ptr_val (y :: 8 word ptr) \<notin> buf
          \<and> unat n < addr_card
@@ -141,9 +142,12 @@ done
 thm test_func'_def
 
 theorem test_func_ok:
-  "\<lbrace> \<lambda>s. True \<rbrace>
+  "\<lbrace> \<lambda>s. is_valid_tdTPM_DIGEST_C s
+             (Ptr (symbol_table ''dig'')) \<rbrace>
      test_func'
     \<lbrace> \<lambda> _ s. True \<rbrace>!"
+apply (unfold test_func'_def)
+apply wp
   
 sorry
 
